@@ -43,7 +43,7 @@ const handler = NextAuth({
                 return false;
               }
             }
-            console.log(data)
+           
       
             // Create JWT token
             const token = jwt.sign(
