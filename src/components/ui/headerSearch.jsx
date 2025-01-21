@@ -27,7 +27,7 @@ export function HeaderSearch() {
   const logout = async()=>{
     setLoading(true)
    
-
+    await logoutUser()
     await signOut('google')
     router.push('/')
     setLoading(false)

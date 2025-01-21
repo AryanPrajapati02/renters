@@ -5,8 +5,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from 'next/navigation'
 
 function BottomNavigation() {
+  const router = useRouter()
+  const addListing = () => {
+    router.push('/post-room')
+  }
   return (
    <>
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t py-2 px-4 backdrop-blur-lg bg-white/90">
@@ -22,6 +27,7 @@ function BottomNavigation() {
             </Button>
             <div className="relative -top-4">
               <Button 
+              onClick={() => addListing()}
                 size="icon" 
                 className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg"
               >
