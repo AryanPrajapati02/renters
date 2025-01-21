@@ -29,7 +29,7 @@ const handler = NextAuth({
     
             if (!data) {
               // User does not exist, insert new user
-              const { error: insertError } = await supabase
+              const { data ,error: insertError } = await supabase
                 .from('user')
                 .insert({
                   email: user.email,
@@ -37,16 +37,16 @@ const handler = NextAuth({
                   password:"google",
                   verified: true
                 });
+
     
               if (insertError) {
                 console.error('Error inserting user:', insertError);
                 return false;
               }
-            }
-      
-            // Create JWT token
+
+                     // Create JWT token
             const token = jwt.sign(
-              { userId: user[0].id, email: user[0].email },
+              { userId: data[0]?.id, email: data[0]?.email },
               process.env.JWT_SECRET,
               { expiresIn: '3d' }
             );
@@ -57,6 +57,9 @@ const handler = NextAuth({
               httpOnly: true,
               maxAge: 60 * 60 * 24 * 3, // 3 days
             });
+            }
+      
+     
     
             return true;
           }
