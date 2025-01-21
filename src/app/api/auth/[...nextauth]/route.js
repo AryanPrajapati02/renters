@@ -36,8 +36,6 @@ const handler = NextAuth({
                   name: user.name,
                   password:"google",
                   verified: true
-                 
-                 
                 });
     
               if (insertError) {
@@ -48,13 +46,13 @@ const handler = NextAuth({
       
             // Create JWT token
             const token = jwt.sign(
-              { userId: user[0].id, email: user[0].email },
+              { userId: user.id, email: user.email },
               process.env.JWT_SECRET,
-              { expiresIn: '3d'}
+              { expiresIn: '3d' }
             );
     
             // Set token in cookie
-            const cookieStore =await cookies();
+            const cookieStore = await cookies();
             cookieStore.set('token', token, {
               httpOnly: true,
               maxAge: 60 * 60 * 24 * 3, // 3 days
@@ -67,7 +65,9 @@ const handler = NextAuth({
         },
 
         async session({ session, token }) {
-          session.user.id = token.sub;
+          if (token && token.sub) {
+            session.user.id = token.sub;
+          }
           return session;
         },
         async jwt({ token, user }) {
