@@ -43,10 +43,11 @@ const handler = NextAuth({
                 return false;
               }
             }
+            console.log(data)
       
             // Create JWT token
             const token = jwt.sign(
-              { userId: data[0].id, email: data[0].email },
+              { userId: data.id, email: data.email },
               process.env.JWT_SECRET,
               { expiresIn: '3d' }
             );
