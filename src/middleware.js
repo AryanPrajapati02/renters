@@ -15,10 +15,10 @@ export default async function middleware(request) {
   const isPublicRoute = publicRoutes.includes(path)
  
   // 3. Decrypt the session from the cookie
-  const cookie = (await cookies()).get('token')?.value || " "
+  const cookie = (await cookies()).get('token')?.value || ""
 
   
-  if(cookie == " "){
+  if(cookie == ""){
     return NextResponse.redirect(new URL('/auth/user/login', request.nextUrl))
  }
   
@@ -44,5 +44,5 @@ export default async function middleware(request) {
  
 // Routes Middleware should not run on
 export const config = {
-  matcher: [  '/room' ],
+  matcher: [  '/room' , '/auth/user/register ', '/auth/user/login'],
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -14,8 +14,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "react-hot-toast"
-import { useDebouncedCallback } from "use-debounce";
-
+import { useDebouncedCallback } from "use-debounce"
+import { fetchUserDetail } from "@/action"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -39,6 +39,20 @@ const formSchema = z.object({
 })
 
 export default function RoomPostForm() {
+
+  const [user, setUser] = useState(null)
+    const userDetail =useCallback(async()=>{
+      const response = await fetchUserDetail()
+      if(response.success){
+      
+        setUser(response.userData.id)
+        
+
+      }
+    },[])
+    useEffect(() => {
+      userDetail();
+    }, []);
   const [images, setImages] = useState([])
   const [locationSuggestions, setLocationSuggestions] = useState([])
   const {
@@ -60,11 +74,40 @@ export default function RoomPostForm() {
     },
   })
 
-  const onSubmit = (data) => {
-    console.log(data)
-    toast.success("Room details submitted successfully")
-  }
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData()
 
+      // Append all form fields to formData
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "images") {
+          value.forEach((file) => formData.append("images", file))
+        } else if (key === "amenities" || key === "facilityType") {
+          formData.append(key, JSON.stringify(value))
+        } else {
+          formData.append(key, value)
+          
+        }
+      })
+      formData.append("ownerId", user)
+
+      const response = await fetch("/api/post-room", {
+        method: "POST",
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast.success("Room details submitted successfully")
+      } else {
+        throw new Error(result.error || "Failed to submit room details")
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      toast.error("Failed to submit room details")
+    }
+  }
   const handleImageUpload = (e) => {
     if (e.target.files) {
       setImages(Array.from(e.target.files))
@@ -72,31 +115,16 @@ export default function RoomPostForm() {
     }
   }
 
-//   const debouncedLocationSearch = useCallback( 
-//     debounce((input) => {
-//       // Here you would typically call the Google Places API
-//       // For demonstration, we'll just set some dummy suggestions
-//       setLocationSuggestions([`${input} Street`, `${input} Avenue`, `${input} Road`])
-//     }, 300),
-//     [],
-//   )
-
-//   const handleLocationChange = (e) => {
-//     const input = e.target.value
-//     setValue("location", input)
-//     debouncedLocationSearch(input)
-//   }
-
-const debouncedLocationSearch = useDebouncedCallback((input) => {
+  const debouncedLocationSearch = useDebouncedCallback((input) => {
     // Simulate API call for location suggestions
-    setLocationSuggestions([`${input} Street`, `${input} Avenue`, `${input} Road`]);
-  }, 300);
+    setLocationSuggestions([`${input} Street`, `${input} Avenue`, `${input} Road`])
+  }, 300)
 
   const handleLocationChange = (e) => {
-    const input = e.target.value;
-    setValue("location", input);
-    debouncedLocationSearch(input);
-  };
+    const input = e.target.value
+    setValue("location", input)
+    debouncedLocationSearch(input)
+  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto bg-white shadow-lg">
@@ -248,28 +276,46 @@ const debouncedLocationSearch = useDebouncedCallback((input) => {
             <div className="space-y-2">
               <Label className="text-black">Food</Label>
               <div className="flex flex-wrap gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="veg"
-                    {...register("amenities.food")}
-                    value="veg"
-                    className="text-black focus:ring-black"
-                  />
-                  <Label htmlFor="veg" className="text-black">
-                    Veg
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="non-veg"
-                    {...register("amenities.food")}
-                    value="non-veg"
-                    className="text-black focus:ring-black"
-                  />
-                  <Label htmlFor="non-veg" className="text-black">
-                    Non-veg
-                  </Label>
-                </div>
+                <Controller
+                  name="amenities.food"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="veg"
+                          checked={field.value.includes("veg")}
+                          onCheckedChange={(checked) => {
+                            const updatedValue = checked
+                              ? [...field.value, "veg"]
+                              : field.value.filter((value) => value !== "veg")
+                            field.onChange(updatedValue)
+                          }}
+                          className="text-black focus:ring-black"
+                        />
+                        <Label htmlFor="veg" className="text-black">
+                          Veg
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="non-veg"
+                          checked={field.value.includes("non-veg")}
+                          onCheckedChange={(checked) => {
+                            const updatedValue = checked
+                              ? [...field.value, "non-veg"]
+                              : field.value.filter((value) => value !== "non-veg")
+                            field.onChange(updatedValue)
+                          }}
+                          className="text-black focus:ring-black"
+                        />
+                        <Label htmlFor="non-veg" className="text-black">
+                          Non-veg
+                        </Label>
+                      </div>
+                    </>
+                  )}
+                />
               </div>
             </div>
             <div className="space-y-2">
@@ -302,19 +348,32 @@ const debouncedLocationSearch = useDebouncedCallback((input) => {
             <div className="space-y-2">
               <Label className="text-black">Other Amenities</Label>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {["hot-water", "parking", "wifi", "laundry", "terrace", "garden"].map((amenity) => (
-                  <div key={amenity} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={amenity}
-                      {...register("amenities.other")}
-                      value={amenity}
-                      className="text-black focus:ring-black"
-                    />
-                    <Label htmlFor={amenity} className="text-black">
-                      {amenity.replace("-", " ").charAt(0).toUpperCase() + amenity.slice(1)}
-                    </Label>
-                  </div>
-                ))}
+                <Controller
+                  name="amenities.other"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      {["hot-water", "parking", "wifi", "laundry", "terrace", "garden"].map((amenity) => (
+                        <div key={amenity} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={amenity}
+                            checked={field.value.includes(amenity)}
+                            onCheckedChange={(checked) => {
+                              const updatedValue = checked
+                                ? [...field.value, amenity]
+                                : field.value.filter((value) => value !== amenity)
+                              field.onChange(updatedValue)
+                            }}
+                            className="text-black focus:ring-black"
+                          />
+                          <Label htmlFor={amenity} className="text-black">
+                            {amenity.replace("-", " ").charAt(0).toUpperCase() + amenity.slice(1)}
+                          </Label>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                />
               </div>
             </div>
           </div>
