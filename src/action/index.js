@@ -216,7 +216,8 @@ export async function verifyOTP({ email, otp }) {
  
 
   export async function logoutUser(req){
-    await cookies().delete('token')
+    const cookie = await cookies()
+    cookie.delete('token')
     return { success: true, message: ' logged out successfully' }
     
   }
@@ -285,23 +286,31 @@ export async function verifyOTP({ email, otp }) {
 //     }
 // }
 
-// module.exports.getAutoCompleteSuggestions = async (input) => {
-//   if (!input) {
-//       throw new Error('query is required');
-//   }
+export const getAutoCompleteSuggestions = async (input) => {
+  if (!input) {
+      return { success: false, message: 'Input is required' };
+  }
 
-//   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-//   const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}`;
+ 
+  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${process.env.GOOGLE_MAPS_API_KEY}`;
 
-//   try {
-//       const response = await axios.get(url);
-//       if (response.data.status === 'OK') {
-//           return response.data.predictions.map(prediction => prediction.description).filter(value => value);
-//       } else {
-//           throw new Error('Unable to fetch suggestions');
-//       }
-//   } catch (err) {
-//       console.error(err);
-//       throw err;
-//   }
-// }
+  try {
+      const response = await fetch(url);
+      const respons = await response.json();
+      
+      if (respons.status === 'OK') {
+        const data = respons.predictions.map(prediction => prediction.description).filter(value => value);
+       
+        return {
+            success: true,
+            message: 'Suggestions fetched successfully',
+            data
+        };
+      } else {
+         return { success: false, message: 'Unable to fetch suggestions' };
+      }
+  } catch (err) {
+      console.error(err);
+      return { success: false, message: 'An unexpected error occurred' };
+  }
+}

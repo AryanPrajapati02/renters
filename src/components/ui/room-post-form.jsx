@@ -15,7 +15,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "react-hot-toast"
 import { useDebouncedCallback } from "use-debounce"
-import { fetchUserDetail } from "@/action"
+import { fetchUserDetail, getAutoCompleteSuggestions } from "@/action"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -53,6 +54,10 @@ export default function RoomPostForm() {
     useEffect(() => {
       userDetail();
     }, []);
+
+
+    const router = useRouter()
+    const [loading, setLoading] = useState(false)
   const [images, setImages] = useState([])
   const [locationSuggestions, setLocationSuggestions] = useState([])
   const {
@@ -75,6 +80,7 @@ export default function RoomPostForm() {
   })
 
   const onSubmit = async (data) => {
+    setLoading(true)
     try {
       const formData = new FormData()
 
@@ -99,12 +105,17 @@ export default function RoomPostForm() {
       const result = await response.json()
 
       if (result.success) {
+        
+        router.push(`/room`)
+        setLoading(false)
         toast.success("Room details submitted successfully")
+
       } else {
-        throw new Error(result.error || "Failed to submit room details")
+        setLoading(false)
+        toast.error(result.error || "Failed to submit room details")
       }
     } catch (error) {
-      console.error("Error submitting form:", error)
+      setLoading(false)
       toast.error("Failed to submit room details")
     }
   }
@@ -115,9 +126,16 @@ export default function RoomPostForm() {
     }
   }
 
-  const debouncedLocationSearch = useDebouncedCallback((input) => {
-    // Simulate API call for location suggestions
-    setLocationSuggestions([`${input} Street`, `${input} Avenue`, `${input} Road`])
+  const debouncedLocationSearch = useDebouncedCallback(async(input) => {
+    // Call API to fetch location suggestions
+    const res =  await getAutoCompleteSuggestions(input)
+   
+    if (res.success) {
+      setLocationSuggestions([res.data])
+      
+    } else {
+      console.log(res)
+    }
   }, 300)
 
   const handleLocationChange = (e) => {
@@ -464,13 +482,16 @@ export default function RoomPostForm() {
                 {locationSuggestions.map((suggestion, index) => (
                   <li
                     key={index}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setValue("location", suggestion)
-                      setLocationSuggestions([])
-                    }}
+                    className="px-4 py-4 hover:bg-gray-100 cursor-pointer  "
+                   
                   >
-                    {suggestion}
+                    {suggestion.map((suggestion)=>{
+                      return <p className="border-b border-gray-100 p-1 text-black font-sans"   onClick={() => {
+                        setValue("location", suggestion)
+                        setLocationSuggestions([])
+                      }}>{suggestion}</p>
+                    })}
+                    {/* {suggestion} */}
                   </li>
                 ))}
               </ul>
@@ -491,7 +512,12 @@ export default function RoomPostForm() {
           </div>
 
           <Button type="submit" className="w-full bg-black hover:bg-gray-800 text-white">
-            Submit
+            Submit {
+          loading ? <> <svg className="animate-spin h-7 w-7 text-gray-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-50" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg></>: null
+        }
           </Button>
         </form>
       </CardContent>

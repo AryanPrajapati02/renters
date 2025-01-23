@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import {supabase} from "@/lib/db"
-
+import { cookies } from "next/headers";
 
 export async function POST(req) {
   try {
@@ -37,7 +37,7 @@ export async function POST(req) {
         upsert: false
       })
       if(error) {
-        return NextResponse.json({ success: false, error: "Failed to create listing!!" }, { status: 500 });
+        return NextResponse.json({ success: false, error: "Failed to create listing !!" }, { status: 500 });
 
 
       }
@@ -64,15 +64,22 @@ export async function POST(req) {
   }
 }
 
-// export async function GET(req) {
-//   try {
-//     const { data, error } = await supabase.from("listings").select("*");
+export async function GET(request) {
+  try {
+    const cookieStore = await cookies()
+    const userCookie = cookieStore.get('user')?.value || ""
+    const user = userCookie ? JSON.parse(userCookie) : null
+    
+    const {data , error} = await supabase.from("listing").select(`* , listingImages(url , listing_id)`).eq('ownerId', user.userId)
+    
 
-//     if (error) throw error;
+    if (error){
+      return NextResponse.json({ success: false, error: "Failed to fetch listings" }, { status: 500 });
+    }
 
-//     return NextResponse.json({ success: true, listings });
-//   } catch (error) {
-//     console.error("Error fetching listings:", error);
-//     return NextResponse.json({ success: false, error: "Failed to fetch listings" }, { status: 500 });
-//   }
-// }
+    return NextResponse.json({ success: true , data : data });
+  } catch (error) {
+    console.error("Error fetching listings:", error);
+    return NextResponse.json({ success: false, error: "Failed to fetch listings" }, { status: 500 });
+  }
+}
