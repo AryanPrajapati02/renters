@@ -1,4 +1,4 @@
-import Chat from "@/components/Chat"
+import Chat from "@/components/ui/Chat"
 
 export default function ChatPage({ params }) {
   const roomId = params.roomId
