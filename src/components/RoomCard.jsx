@@ -35,7 +35,7 @@ const RoomCard = ({ room }) => {
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform md:hover:scale-105">
       <div className="relative">
         <Image
-          src={room?.listingImages[0]?.url || "/placeholder.svg"}
+          src={room?.listingImages?.[0]?.url || "/placeholder.svg"}
           alt={room?.title}
           width={500}
           height={300}
@@ -66,21 +66,21 @@ const RoomCard = ({ room }) => {
             <Users size={16} className="mr-1 text-gray-600" />
             <span className="text-sm text-gray-600">Up to {room?.sharingType} persons</span>
           </div>
-          <span className="text-lg font-bold text-gray-800">₹{room.price}/mo</span>
+          <span className="text-lg font-bold text-gray-800">₹{room?.price}/mo</span>
         </div>
         <div className="flex gap-2 flex-wrap">
         <div className="flex flex-wrap gap-2 mb-4">
-          {room.amenities.food.map((amenity, index) => (
+          {room?.amenities?.food?.map((amenity, index) => (
             <span key={index} className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full flex items-center">
               {getAmenityIcon(amenity)}
               {amenity}
             </span>
           ))}
           <span className="px-5 py-1 text-xs bg-gray-100 text-gray-600 rounded-full flex items-center">
-            {getAmenityIcon(room.amenities.bathroom)}
-            {room.amenities.bathroom}
+            {getAmenityIcon(room?.amenities?.bathroom)}
+            {room?.amenities?.bathroom}
           </span>
-          {room.amenities.other.map((amenity, index) => (
+          {room?.amenities?.other?.map((amenity, index) => (
             <span key={index} className="px-5 py-1 text-xs bg-gray-100 text-gray-600 rounded-full flex items-center">
               {getAmenityIcon(amenity)}
               {amenity}
@@ -88,7 +88,7 @@ const RoomCard = ({ room }) => {
           ))}
         </div>
         <div className="flex flex-wrap gap-2 mb-4">
-          {room.facilityType.map((facility, index) => (
+          {room?.facilityType?.map((facility, index) => (
             <span key={index} className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full flex items-center">
               {getFacilityIcon(facility)}
               {facility}
