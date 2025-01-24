@@ -9,6 +9,7 @@ import { rooms } from "@/data/rooms"
 import { faqs } from "@/data/faqs"
 import PrivacyPolicy from "@/components/PrivacyPolicy"
 import TermsConditions from "@/components/TermsConditions"
+import Link from "next/link"
 
 
 export default function Home() {
@@ -337,7 +338,7 @@ export default function Home() {
                   <input
                     type="text"
                     id="name"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
+                    className="mt-1 block w-full rounded-md h-10 border-gray-300 shadow-sm focus:border-gray-500 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
                   />
                 </div>
                 <div>
@@ -347,7 +348,7 @@ export default function Home() {
                   <input
                     type="email"
                     id="email"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
+                    className="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
                   />
                 </div>
                 <div>
@@ -422,6 +423,16 @@ export default function Home() {
                   <a href="#contact" className="text-gray-400 hover:text-white">
                     Contact
                   </a>
+                </li>
+                <li>
+                  <Link href="/auth/user/login" className="text-gray-400 hover:text-white">
+                   Login
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/auth/user/register" className="text-gray-400 hover:text-white">
+                    Register
+                  </Link>
                 </li>
               </ul>
             </div>
