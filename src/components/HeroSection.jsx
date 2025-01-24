@@ -59,12 +59,12 @@ const HeroSection = () => {
             key={i}
             className="absolute w-2 h-2 bg-gray-500 rounded-full"
             initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * 1000,
+              y: Math.random() *2000,
               opacity: Math.random() * 0.5 + 0.2,
             }}
             animate={{
-              y: [null, Math.random() * window.innerHeight],
+              y: [null, Math.random() *2000],
               opacity: [null, Math.random() * 0.5 + 0.2],
             }}
             transition={{
