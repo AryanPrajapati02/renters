@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import Image from "next/image"
 // import { fetchUserListing } from "@/app/redux/slice"
 
 const Listings = ({ listings }) => {
@@ -18,7 +19,7 @@ const Listings = ({ listings }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {listing.map((listing) => (
           <Card key={listing.id} className="overflow-hidden">
-            <img src={listing.listingImages[0].url || "/placeholder.svg"} alt={listing.title} className="w-full h-48 object-cover" />
+            <Image src={listing.listingImages[0].url || "/placeholder.svg"} alt={listing.title} className="w-full h-48 object-cover" />
             <CardContent className="p-4">
               <h3 className="text-xl font-semibold mb-2">{listing.title}</h3>
               <p className="text-gray-600 mb-2">{listing.description}</p>

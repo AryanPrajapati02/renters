@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Search, Menu, Bell, Home, MessageCircle, Plus, Heart, User, Mic } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -9,24 +9,23 @@ import Image from "next/image"
 import { HeaderSearch } from '@/components/ui/headerSearch'
 import BottomNavigation from '@/components/ui/bottomNavigation'
 import { useSession } from 'next-auth/react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchLatestListing } from '../redux/slice'
+import RoomCard from '@/components/RoomCard'
+
 
 
 export default function HomePage() {
-  // const session = useSession()
-  // const [isAuthenticated, setIsAuthenticated] = useState(false)
- 
- 
 
-
-  // if(session.status === "authenticated") {
+ const dispatch = useDispatch()
+ const [latestListing , setLatestListing] = useState([])
+ const data = useSelector((state) => state?.user?.latestListings)
+ 
+ useEffect(() => {
+   dispatch(fetchLatestListing())
    
-  //   setIsAuthenticated(true)
 
-
-  // }
- 
-  
- 
+ }, [dispatch])
   return <>
  
   {/* { isAuthenticated &&  ( */}
@@ -52,37 +51,12 @@ export default function HomePage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                id: 1,
-                title: "Marina, CA, NY",
-                location: "New York, NY 100",
-                price: "$2,500/mo",
-                beds: 4,
-                baths: 2,
-                sqft: "1,200 sqft",
-                image: "/placeholder.svg?height=300&width=500",
-                agent: "John Adam",
-                isNew: true
-              },
-              {
-                id: 2,
-                title: "FiDi Studio Office",
-                location: "New York, NY 100",
-                price: "$3,200/mo",
-                beds: 4,
-                baths: 2,
-                sqft: "1,500 sqft",
-                image: "/placeholder.svg?height=300&width=500",
-                agent: "Sergio Ramos",
-                isNew: false
-              }
-            ].map((listing) => (
+            {/* {data?.map((listing) => (
               <Link href={`/room/details/${listing.id}`} key={listing.id}>
                 <Card className="overflow-hidden group hover:shadow-lg transition-all duration-300">
                   <div className="relative">
                     <Image
-                      src={listing.image || "/placeholder.svg"}
+                      src={listing?.listingImages[0]?.url}
                       alt={listing.title}
                       width={500}
                       height={300}
@@ -102,7 +76,7 @@ export default function HomePage() {
                     )}
                     <div className="absolute bottom-3 left-3">
                       <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-gray-900">
-                        {listing.price}
+                        ₹{listing.price}
                       </Badge>
                     </div>
                   </div>
@@ -124,16 +98,17 @@ export default function HomePage() {
                       <span>{listing.baths} Bath</span>
                       <span>{listing.sqft}</span>
                     </div>
-                    <div className="flex items-center gap-2 mt-4">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-medium">
-                        {listing.agent[0]}
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">{listing.agent}</span>
-                    </div>
+                    
                   </CardContent>
                 </Card>
               </Link>
+            ))} */}
+            {data?.map((listing) => (
+              <Link href={`/room/details/${listing.id}`} key={listing.id}>
+                <RoomCard room={listing} />
+              </Link>
             ))}
+         
           </div>
         </div>
         {/* Bottom Navigation */}

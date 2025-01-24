@@ -314,3 +314,23 @@ export const getAutoCompleteSuggestions = async (input) => {
       return { success: false, message: 'An unexpected error occurred' };
   }
 }
+
+
+export const fetchLatestListings = async()=>{
+    try{
+      const { data, error } = await supabase
+      .from('listing')
+      .select(`* , listingImages(url , listing_id)`)
+      .order('created_at', { ascending: false })
+      .limit(5);
+  
+      if (error) {
+        return { success: false, message: 'Failed to fetch latest listings' };
+      }
+  
+      return { success: true, message: 'Latest listings fetched successfully', data };
+    }catch(e){
+      console.log(e)
+      return { success: false, message: 'An unexpected error occurred' };
+    }
+}

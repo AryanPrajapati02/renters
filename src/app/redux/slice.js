@@ -1,6 +1,6 @@
 'use client'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchUserDetail } from '@/action';
+import { fetchLatestListings, fetchUserDetail } from '@/action';
 
 // Define the initial state
 const initialState = {
@@ -8,6 +8,7 @@ const initialState = {
   listings:null,
   status: 'idle',
   error: null,
+ latestListings: null,
 };
 
 // Create an async thunk for fetching user data
@@ -45,6 +46,29 @@ export const fetchUserListing = createAsyncThunk('user/room/fetch', async () => 
        
  
 });
+export const fetchLatestListing = createAsyncThunk('latest/listing/fetch', async () => {
+    try{
+
+
+      const data = await fetchLatestListings()
+      
+      
+       if(data.status){
+              return data
+       }
+         else{
+              return data
+         }
+       
+      
+    }catch(e){
+        console.log(e)
+        return e
+    }
+    
+       
+ 
+});
 
 
 
@@ -64,6 +88,10 @@ const userSlice = createSlice({
       .addCase(fetchUserListing.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.listings = action.payload?.data;
+      })
+      .addCase(fetchLatestListing.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.latestListings = action.payload?.data;
       })
     
   },

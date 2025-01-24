@@ -7,7 +7,11 @@ const nextConfig = {
             "6sv8xlp5-3000.inc1.devtunnels.ms"
           ]
         }
-      }
+      },
+      reactStrictMode: true,
+      images: {
+        domains: ['epfputdyovtehqlzerua.supabase.co'],
+      },
 };
 
 export default nextConfig;
