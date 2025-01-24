@@ -41,14 +41,14 @@ const Settings = ({ user, onUpdate }) => {
       <div>
         <h3 className="text-lg font-semibold mb-4">Notification Preferences</h3>
         <div className="space-y-4">
-          {Object.entries(notifications).map(([key, value]) => (
+          {/* {Object.entries(notifications).map(([key, value]) => (
             <div key={key} className="flex items-center justify-between">
               <Label htmlFor={key} className="capitalize">
                 {key} Notifications
               </Label>
               <Switch id={key} checked={value} onCheckedChange={() => handleNotificationChange(key)} />
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
       <div>

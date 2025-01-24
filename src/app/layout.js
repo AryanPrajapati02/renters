@@ -3,6 +3,7 @@ import "./globals.css";
 // import { Toaster } from "@/components/ui/toaster"
 import { Toaster } from "react-hot-toast";
 import AuthProvider from "@/comp/Authprovider/AuthProvider";
+import { Providers } from "./redux/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,11 +26,13 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Providers>
         <AuthProvider>
           
         {children}
         <Toaster />
         </AuthProvider>
+        </Providers>
       </body>
     </html>
   );

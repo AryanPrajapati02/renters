@@ -3,22 +3,14 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+// import { fetchUserListing } from "@/app/redux/slice"
 
 const Listings = ({ listings }) => {
-  const [listing, setListing] = useState([])
-const fetchListings = async () => {
-    const response = await fetch("/api/post-room")
-    const data = await response.json()
-    console.log(data)
-    if (response.ok) {
-      setListing(data.data)
-    } else {
-      console.error("Failed to fetch listings:", data)
-    }
-}
-useEffect(() => {
-    fetchListings()
-}, [])
+  
+  const listing = useSelector((state) => state?.user?.listings)
+ 
+
 
   return (
     <div className="space-y-6">

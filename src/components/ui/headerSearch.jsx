@@ -4,24 +4,24 @@ import { useState, useEffect, useCallback } from 'react'
 import { Search, Menu, Bell, Mic, HomeIcon } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { signOut } from 'next-auth/react'
-import { fetchUserDetail, logoutUser } from '@/action'
+import {  logoutUser } from '@/action'
 import { useRouter } from 'next/navigation'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchUser, fetchUserListing } from '@/app/redux/slice'
+import { set } from 'react-hook-form'
 
 export function HeaderSearch() {
   const router = useRouter()
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
-  const [user, setUser] = useState(null)
-
- 
 
 
-  const userDetail =useCallback(async()=>{
-    const response = await fetchUserDetail()
-    if(response.success){
-      setUser(response.userData)
-    }
-  },[])
+  const dispatch = useDispatch()
+  
+
+  const userData = useSelector((state) => state?.user?.user)
+  
+
 
   const [loading, setLoading] = useState(false)
   const logout = async()=>{
@@ -33,9 +33,13 @@ export function HeaderSearch() {
     setLoading(false)
   }
  
+  // setUser(userData?.name)
   useEffect(() => {
-    userDetail();
-  }, []);
+  
+    dispatch(fetchUser())
+    dispatch(fetchUserListing())
+  
+  }, [dispatch]);
  
 
 
@@ -89,7 +93,7 @@ export function HeaderSearch() {
           </div>
         </div>
         <h1 className="text-3xl font-bold mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
-          Hi, {user?.name}
+          Hi, {userData?.name}
         </h1>
         
         {/* Search Bar */}

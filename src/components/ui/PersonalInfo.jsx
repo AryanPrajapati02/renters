@@ -7,12 +7,14 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useSelector } from "react-redux"
 
 const PersonalInfo = ({ user, onUpdate }) => {
-  const [name, setName] = useState(user.name)
-  const [email, setEmail] = useState(user.email)
-  const [phone, setPhone] = useState(user.phone)
-  const [address, setAddress] = useState(user.address)
+  const userData = useSelector((state) => state?.user?.user)
+  const [name, setName] = useState(userData?.name)
+  const [email, setEmail] = useState(userData?.email)
+  const [phone, setPhone] = useState(userData?.phone)
+  const [address, setAddress] = useState(userData?.address)
   const [errors, setErrors] = useState({})
   const [isSuccess, setIsSuccess] = useState(false)
 
