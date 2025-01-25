@@ -2,13 +2,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchLatestListings, fetchUserDetail } from '@/action';
 
+const isBrowser = typeof window !== 'undefined';
 // Define the initial state
 const initialState = {
   user: null,
   listings:null,
+  latestListings: null,
+  wishlist: isBrowser ? JSON.parse(localStorage.getItem('wishlist')) || [] : [],
   status: 'idle',
   error: null,
- latestListings: null,
 };
 
 // Create an async thunk for fetching user data
@@ -75,12 +77,22 @@ export const fetchLatestListing = createAsyncThunk('latest/listing/fetch', async
 const userSlice = createSlice({
   name: 'userData',
   initialState,
-  reducers: {},
+  reducers: {
+    toggleWishlist: (state, action) => {
+      const itemIndex = state.wishlist.findIndex(item => item.id === action.payload.id);
+      let newWishlist;
+      if (itemIndex >= 0) {
+        newWishlist = state.wishlist.filter(item => item.id !== action.payload.id);
+      } else {
+        newWishlist = [...state.wishlist, action.payload];
+      }
+      state.wishlist = newWishlist;
+      localStorage.setItem('wishlist', JSON.stringify(newWishlist));
+    },
+  },
   extraReducers: (builder) => {
     builder
-    //   .addCase(fetchUser.pending, (state) => {
-    //     state.status = 'loading';
-    //   })
+    
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.user = action.payload;
@@ -97,5 +109,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { } = userSlice.actions;
+export const { toggleWishlist } = userSlice.actions;
 export default userSlice.reducer;

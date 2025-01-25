@@ -1,29 +1,127 @@
 'use client'
-import { useEffect } from 'react'
-import { fetchLatestListing } from '@/app/redux/slice'
+import { useEffect, useState } from 'react'
+import { fetchLatestListing, toggleWishlist } from '@/app/redux/slice'
 import Carousel from '@/components/ui/Carousel'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, Heart, Share2, Phone, MessageCircle, Navigation2, ImageIcon, Wifi, Coffee, ShowerHead, Thermometer, ParkingMeter, Flower, AirVent, Home, Wind, User } from 'lucide-react'
+import {
+  ArrowLeft,
+  Heart,
+  Share2,
+  Phone,
+  MessageCircle,
+  Navigation2,
+  ImageIcon,
+  Wifi,
+  Coffee,
+  ShowerHead,
+  Thermometer,
+  ParkingMeter,
+  Flower,
+  AirVent,
+  Home,
+  Wind,
+  User,
+  MapPin,
+  IndianRupee,
+  Users,
+  Check,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Image from "next/image"
 import Link from "next/link"
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function DetailsPage() {
   const { id } = useParams()
   const dispatch = useDispatch()
   const roomData = useSelector((state) => state?.user?.latestListings)
   const room = roomData?.find((room) => room.id === id)
+  const [loading, setLoading] = useState(true)
+  const [addWishlist, setAddWishlist] = useState(false)
+  const wishlist = useSelector((state) => state?.user?.wishlist)
+  const isInWishlist = wishlist.some(item => item.id === id)
 
   useEffect(() => {
     async function fetchData() {
       if (!roomData || roomData.length === 0) {
         await dispatch(fetchLatestListing())
       }
+      setLoading(false)
     }
     fetchData()
   }, [dispatch, roomData])
+
+  const handleToggleWishlist = () => {
+    dispatch(toggleWishlist(room));
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header Skeleton */}
+        <div className="relative">
+          <Skeleton className="w-full h-[300px]" />
+          <div className="absolute top-4 left-4 right-4 flex justify-between">
+            <Skeleton className="w-8 h-8 rounded-full" />
+            <div className="flex gap-2">
+              <Skeleton className="w-8 h-8 rounded-full" />
+              <Skeleton className="w-8 h-8 rounded-full" />
+            </div>
+          </div>
+          <div className="absolute bottom-4 right-4 bg-black/50 text-white px-2 py-1 rounded-md text-sm">
+            <Skeleton className="w-16 h-4" />
+          </div>
+        </div>
+
+        {/* Action Buttons Skeleton */}
+        <div className="container px-4 py-6">
+          <div className="grid grid-cols-4 gap-4">
+            {Array(4).fill().map((_, index) => (
+              <Skeleton key={index} className="w-full h-16 rounded-lg" />
+            ))}
+          </div>
+        </div>
+
+        {/* Details Content Skeleton */}
+        <div className="container px-4">
+          <Tabs defaultValue="overview">
+            <TabsList className="w-full justify-start">
+              <TabsTrigger value="overview"><Skeleton className="w-24 h-8" /></TabsTrigger>
+              <TabsTrigger value="features"><Skeleton className="w-24 h-8" /></TabsTrigger>
+              <TabsTrigger value="value"><Skeleton className="w-24 h-8" /></TabsTrigger>
+            </TabsList>
+            <TabsContent value="overview" className="mt-4">
+              {Array(8).fill().map((_, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <Skeleton className="w-6 h-6 mr-2" />
+                  <Skeleton className="w-full h-4" />
+                </div>
+              ))}
+            </TabsContent>
+            <TabsContent value="features" className="mt-4">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4"><Skeleton className="w-32 h-8" /></h2>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {Array(6).fill().map((_, index) => (
+                  <Skeleton key={index} className="w-24 h-8 rounded-full" />
+                ))}
+              </div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4"><Skeleton className="w-32 h-8" /></h2>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {Array(6).fill().map((_, index) => (
+                  <Skeleton key={index} className="w-24 h-8 rounded-full" />
+                ))}
+              </div>
+            </TabsContent>
+            <TabsContent value="value" className="mt-4">
+              <Skeleton className="w-full h-4" />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    )
+  }
 
   if (!room) {
     return <div>Room not found</div>
@@ -79,8 +177,8 @@ export default function DetailsPage() {
             </Button>
           </Link>
           <div className="flex gap-2">
-            <Button variant="ghost" size="icon" className="bg-white rounded-full">
-              <Heart className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="bg-white rounded-full" onClick={handleToggleWishlist}>
+              <Heart className={`h-4 w-4 ${isInWishlist ? 'text-red-500 fill-current' : 'text-black'}`} />
             </Button>
             <Button variant="ghost" size="icon" className="bg-white rounded-full">
               <Share2 className="h-4 w-4" />
@@ -120,33 +218,39 @@ export default function DetailsPage() {
           <TabsList className="w-full grid grid-cols-2 gap-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="features">Features</TabsTrigger>
-            
           </TabsList>
           <TabsContent value="overview" className="mt-4">
-            <p className="text-gray-600">{room.description}</p>
-            <div className="mt-4">
-              <strong>Location:</strong> {room.location}
+            <div className="flex items-center mb-2">
+              <MapPin size={40} className="mr-2 text-gray-600" />
+              <span className="text-gray-600">{room.location}</span>
             </div>
-            <div className="mt-2">
-              <strong>Owner Phone:</strong> {room.ownerPhone}
+            <div className="flex items-center mb-2">
+              <Phone size={20} className="mr-2 text-gray-600" />
+              <span className="text-gray-600">{room.ownerPhone}</span>
             </div>
-            <div className="mt-2">
-              <strong>Owner Name:</strong> {room.ownerName}
+            <div className="flex items-center mb-2">
+              <User size={20} className="mr-2 text-gray-600" />
+              <span className="text-gray-600">{room.ownerName}</span>
             </div>
-            <div className="mt-2">
-              <strong>Price:</strong> ₹{room.price}/mo
+            <div className="flex items-center mb-2">
+              <IndianRupee size={20} className="mr-2 text-gray-600" />
+              <span className="text-gray-600">₹{room.price}/mo</span>
             </div>
-            <div className="mt-2">
-              <strong>Sharing Type:</strong> Up to {room.sharingType} persons
+            <div className="flex items-center mb-2">
+              <Users size={20} className="mr-2 text-gray-600" />
+              <span className="text-gray-600">Up to {room.sharingType} persons</span>
             </div>
-            <div className="mt-2">
-              <strong>Accommodation Type:</strong> {room.accommodationType}
+            <div className="flex items-center mb-2">
+              <Home size={20} className="mr-2 text-gray-600" />
+              <span className="text-gray-600">{room.accommodationType}</span>
             </div>
-            <div className="mt-2">
-              <strong>Gender:</strong> {room.gender}
+            <div className="flex items-center mb-2">
+              <User size={20} className={`mr-2 ${room.gender === 'female' ? 'text-pink-500' : 'text-blue-500'}`} />
+              <span className="text-gray-600">{room.gender}</span>
             </div>
-            <div className="mt-2">
-              <strong>Availability:</strong> {room.isAvailable ? "Available" : "Not Available"}
+            <div className="flex items-center mb-2">
+              <Check size={20} className="mr-2 text-gray-600" />
+              <span className="text-gray-600">{room.isAvailable ? "Available" : "Not Available"}</span>
             </div>
           </TabsContent>
           <TabsContent value="features" className="mt-4">
@@ -180,7 +284,6 @@ export default function DetailsPage() {
               ))}
             </div>
           </TabsContent>
-         
         </Tabs>
       </div>
     </div>

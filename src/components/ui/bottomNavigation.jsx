@@ -42,10 +42,12 @@ function BottomNavigation() {
               </Button>
               </Link>
             </div>
+            <Link href={`/wishlist`}>
             <Button variant="ghost" size="icon" className="flex flex-col items-center">
               <Heart className="h-5 w-5" />
               <span className="text-xs mt-1">Saved</span>
             </Button>
+            </Link>
             <Link href={`/profile`}>
             <Button variant="ghost" size="icon" className="flex flex-col items-center" >
               <User className="h-5 w-5" />
