@@ -34,7 +34,7 @@ const handler = NextAuth({
                 .insert({
                   email: user.email,
                   name: user.name,
-                  password:"google",
+                  password:"google852041",
                   verified: true
                 });
     
@@ -47,7 +47,7 @@ const handler = NextAuth({
       
             // Create JWT token
             const token = jwt.sign(
-              { userId: data.id, email: data.email },
+              { userId: data?.id, email: data.email },
               process.env.JWT_SECRET,
               { expiresIn: '3d' }
             );
