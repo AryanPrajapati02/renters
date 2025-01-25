@@ -21,16 +21,25 @@ export default function HomePage() {
  const dispatch = useDispatch()
  const [loading, setLoading] = useState(true);
  const data = useSelector((state) => state?.user?.latestListings)
- 
- useEffect(() => {
-   dispatch(fetchLatestListing())
-   if(data?.length > 0){
-     setLoading(false)
-    }
-   
-   
+ const [isFetching, setIsFetching] = useState(false)
 
- }, [dispatch ,data])
+ useEffect(() => {
+   const fetchData = async () => {
+     if (!data || data.length === 0) {
+       if (!isFetching) {
+         setIsFetching(true)
+         await dispatch(fetchLatestListing())
+         setIsFetching(false)
+         setLoading(false)
+       }
+     } else {
+       setLoading(false)
+     }
+   }
+
+   fetchData()
+ }, [dispatch, data, isFetching])
+
   return <>
  
   {/* { isAuthenticated &&  ( */}

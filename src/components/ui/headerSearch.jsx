@@ -23,25 +23,25 @@ export function HeaderSearch() {
   
 
 
+  const userListing = useSelector((state) => state?.user?.listings)
   const [loading, setLoading] = useState(false)
-  const logout = async()=>{
+  
+  const logout = async () => {
     setLoading(true)
-   
     await logoutUser()
     await signOut('google')
     router.push('/')
     setLoading(false)
   }
- 
-  // setUser(userData?.name)
-  useEffect(() => {
-  
-    dispatch(fetchUser())
-    dispatch(fetchUserListing())
-  
-  }, [dispatch]);
- 
 
+  useEffect(() => {
+    if (!userData) {
+      dispatch(fetchUser())
+    }
+    if (!userListing) {
+      dispatch(fetchUserListing())
+    }
+  }, [dispatch, userData, userListing])
 
   useEffect(() => {
     // userDetail()
