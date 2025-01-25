@@ -42,6 +42,7 @@ const handler = NextAuth({
                 console.error('Error inserting user:', insertError);
                 return false;
               }
+              return true;
             }
            
             console.log(data)
