@@ -72,7 +72,7 @@ export function HeaderSearch() {
   }, [lastScrollY ])
 
   return (
-    <header className={`sticky top-0 bg-gradient-to-r from-orange-50 to-pink-100 border-b z-50 shadow-sm transition-transform duration-300 ${
+    <header className={`sticky top-0 bg-gradient-to-r from-orange-50 to-blue-100 border-b z-50 shadow-sm transition-transform duration-300 ${
       isVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       <div className="container px-4 py-4">
