@@ -27,10 +27,12 @@ function BottomNavigation() {
               <span className="text-xs mt-1">Home</span>
             </Button>
             </Link>
+            <Link href={`/chat`}>
             <Button variant="ghost" size="icon" className="flex flex-col items-center">
               <MessageCircle className="h-5 w-5" />
               <span className="text-xs mt-1">Messages</span>
             </Button>
+            </Link>
             <div className="relative -top-4">
               <Link href={`/post-room`}>
               <Button 
