@@ -315,6 +315,25 @@ export const getAutoCompleteSuggestions = async (input) => {
   }
 }
 
+export async function getCityAndStateFromSearch({input}){
+  if (!input) {
+    return { success: false, message: 'Input is required' };
+  }
+    try{
+      
+      const size = input.split(',').length;
+      
+        const city = input.split(',')[size-2];
+        const state = input.split(',')[size-1];
+      
+      
+      return { success: false, message: 'Unable to fetch city and state'  , city : city , state : state};
+
+    }catch(e){
+      return { success: false, message: 'An unexpected error occurred' };
+    }
+}
+
 
 export const fetchLatestListings = async()=>{
     try{
@@ -333,4 +352,63 @@ export const fetchLatestListings = async()=>{
       console.log(e)
       return { success: false, message: 'An unexpected error occurred' };
     }
+}
+
+
+export async function fetchMessages(listingId, limit = 20) {
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*")
+    .eq("listing_id", listingId)
+    .order("created_at", { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    console.error("Error fetching messages:", error)
+    return []
+  }
+  
+
+  return data.reverse()
+}
+
+export async function sendMessage(listingId, senderId, content) {
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({ listing_id: listingId, sender_id: senderId, content })
+    .select()
+
+  if (error) {
+    console.error("Error sending message:", error)
+    return null
+  }
+  
+
+  return data[0]
+}
+
+export async function fetchChatConnections(userId) {
+  try {
+    console.log('userId', userId)
+    const { data, error } = await supabase
+      .from('messages')
+      .select('listing_id, sender_id')
+      .order('listing_id', { ascending: true })
+
+    if (error) {
+      return { success: false, message: 'Failed to fetch chat connections' }
+    }
+    // console.log('data', data)
+    const result =Array.from(
+      new Set(data.map(item => JSON.stringify(item))) // Convert objects to strings
+    ).map(str => JSON.parse(str))
+
+   
+   
+
+    return { success: true, message: 'Chat connections fetched successfully', data: result }
+  } catch (e) {
+    console.log(e)
+    return { success: false, message: 'An unexpected error occurred' }
+  }
 }

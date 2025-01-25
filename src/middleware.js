@@ -5,7 +5,7 @@ import { jwtVerify } from 'jose'
 
 
 // 1. Specify protected and public routes
-const protectedRoutes = ['/room' , '/profile']
+const protectedRoutes = ['/room' , '/profile' , '/wishlist' , '/post-room']
 const publicRoutes = ['/auth/user/login', '/auth/user/register', '/']
 
 export default async function middleware(request) {
@@ -55,5 +55,5 @@ export default async function middleware(request) {
 
 // Routes Middleware should not run on
 export const config = {
-  matcher: ['/room', '/auth/user/register', '/auth/user/login' , '/profile'],
+  matcher: ['/room', '/auth/user/register', '/auth/user/login' , '/profile' , '/wishlist' , '/post-room'],
 }

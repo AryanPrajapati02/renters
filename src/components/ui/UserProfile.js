@@ -105,14 +105,9 @@ const UserProfile = () => {
               <PersonalInfo user={user} onUpdate={handleUpdateProfile} />
             </TabsContent>
             <TabsContent value="listings">
-              <Listings listings={user?.listings} />
+              <Listings />
             </TabsContent>
-            <TabsContent value="bookings">
-              <Bookings bookings={user?.bookings} />
-            </TabsContent>
-            <TabsContent value="reviews">
-              <Reviews reviews={user?.reviews} />
-            </TabsContent>
+           
             <TabsContent value="settings">
               <Settings user={user && user} onUpdate={handleUpdateProfile} />
             </TabsContent>

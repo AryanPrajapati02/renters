@@ -46,12 +46,12 @@ const PersonalInfo = ({ user, onUpdate }) => {
       </div>
       <div className="space-y-2">
         <Label htmlFor="phone">Phone</Label>
-        <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+        <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e?.target?.value)} required />
         {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
       </div>
       <div className="space-y-2">
         <Label htmlFor="address">Address</Label>
-        <Textarea id="address" value={address} onChange={(e) => setAddress(e.target.value)} required />
+        <Textarea id="address" value={address} onChange={(e) => setAddress(e?.target?.value)} required />
       </div>
       <Button type="submit" className="w-full">
         Update Profile

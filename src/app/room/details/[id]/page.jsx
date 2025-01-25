@@ -59,7 +59,7 @@ export default function DetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 ">
         {/* Header Skeleton */}
         <div className="relative">
           <Skeleton className="w-full h-[300px]" />
@@ -166,7 +166,7 @@ export default function DetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-[100vh] bg-gray-50 ">
       {/* Header */}
       <div className="relative">
         <Carousel images={room.listingImages.map(image => image.url)} />
@@ -213,7 +213,7 @@ export default function DetailsPage() {
       </div>
 
       {/* Details Content */}
-      <div className="container px-4">
+      <div className="container px-4 overflow-y-auto h-[60vh] ">
         <Tabs defaultValue="overview">
           <TabsList className="w-full grid grid-cols-2 gap-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -285,6 +285,13 @@ export default function DetailsPage() {
             </div>
           </TabsContent>
         </Tabs>
+      </div>
+      <div className=' grid grid-cols-2 gap-4 bg-white p-2  w-full mt-5 fixed bottom-0'>
+        <Link href={`/chat/${room.id}`} >
+          <Button  className="w-full mt-4 py-5 rounded-md bg-black">Chat Now</Button>
+        
+        </Link>
+        <Button  className="w-full mt-4 py-5 rounded-md border-black bg-white border-2 text-black">Enquire Now</Button>
       </div>
     </div>
   )

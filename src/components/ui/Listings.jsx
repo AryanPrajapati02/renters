@@ -5,32 +5,28 @@ import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Image from "next/image"
+import { fetchUserListing } from "@/app/redux/slice"
+import RoomCard from "@/components/RoomCard"
 // import { fetchUserListing } from "@/app/redux/slice"
 
-const Listings = ({ listings }) => {
+const Listings = () => {
+  const dispatch = useDispatch()
   
   const listing = useSelector((state) => state?.user?.listings)
- 
 
+ 
+  useEffect(() => {
+    if (!listing || listing.length === 0) {
+      dispatch(fetchUserListing())
+    }
+  }, [dispatch, listing])
 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold mb-4">Your Listings</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {listing.map((listing) => (
-          <Card key={listing.id} className="overflow-hidden">
-            <Image src={listing.listingImages[0].url || "/placeholder.svg"} alt={listing.title} className="w-full h-48 object-cover" />
-            <CardContent className="p-4">
-              <h3 className="text-xl font-semibold mb-2">{listing.title}</h3>
-              <p className="text-gray-600 mb-2">{listing.description}</p>
-              <Badge variant="secondary" className="mb-2">
-                ₹{listing.price} /Month
-              </Badge>
-            </CardContent>
-            <CardFooter className="bg-gray-50 p-4">
-              <button className="text-blue-600 hover:underline">Edit Listing</button>
-            </CardFooter>
-          </Card>
+         <RoomCard key={listing.id} room={listing} />
         ))}
       </div>
     </div>

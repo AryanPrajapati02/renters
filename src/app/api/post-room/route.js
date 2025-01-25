@@ -1,16 +1,22 @@
 import { NextResponse } from "next/server";
 import {supabase} from "@/lib/db"
 import { cookies } from "next/headers";
+import { getCityAndStateFromSearch } from "@/action";
 
 export async function POST(req) {
   try {
     const formData = await req.formData();
 
     const listingData = Object.fromEntries(formData.entries());
+    const loc = listingData.location
+  
+    const c =  await getCityAndStateFromSearch({input: loc})
+    
 
     const listing = {
       ...listingData,
-      
+        city: c.city,
+        state: c.state,
       amenities: JSON.parse(listingData.amenities),
       facilityType: JSON.parse(listingData.facilityType),
       price: Number.parseFloat(listingData.price),
