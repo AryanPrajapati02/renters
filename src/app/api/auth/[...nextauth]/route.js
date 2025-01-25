@@ -44,6 +44,7 @@ const handler = NextAuth({
               }
             }
            
+            console.log(data)
       
             // Create JWT token
             const token = jwt.sign(
@@ -51,6 +52,8 @@ const handler = NextAuth({
               process.env.JWT_SECRET,
               { expiresIn: '3d' }
             );
+            
+            console.log(data)
     
             // Set token in cookie
             const cookieStore = await cookies();
