@@ -47,7 +47,7 @@ const handler = NextAuth({
             console.log(data)
       
             // Create JWT token
-            const token = jwt.sign(
+            const token =await jwt.sign(
               { userId: data?.id, email: data.email },
               process.env.JWT_SECRET,
               { expiresIn: '3d' }
