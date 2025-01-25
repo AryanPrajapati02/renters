@@ -42,28 +42,31 @@ const handler = NextAuth({
                 console.error('Error inserting user:', insertError);
                 return false;
               }
+
+
+              
+              // Create JWT token
+              const token =await jwt.sign(
+                { userId: data?.id, email: data.email },
+                process.env.JWT_SECRET,
+                { expiresIn: '3d' }
+              );
+              
+            
+      
+              // Set token in cookie
+              const cookieStore = await cookies();
+              cookieStore.set('token', token, {
+                httpOnly: true,
+                maxAge: 60 * 60 * 24 * 3, // 3 days
+              });
+
               return true;
             }
            
-            console.log(data)
+           
       
-            // Create JWT token
-            const token =await jwt.sign(
-              { userId: data?.id, email: data.email },
-              process.env.JWT_SECRET,
-              { expiresIn: '3d' }
-            );
-            
-            console.log(data)
     
-            // Set token in cookie
-            const cookieStore = await cookies();
-            cookieStore.set('token', token, {
-              httpOnly: true,
-              maxAge: 60 * 60 * 24 * 3, // 3 days
-            });
-    
-            return true;
           }
 
           return false;
