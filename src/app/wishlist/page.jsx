@@ -53,7 +53,20 @@ export default function WishlistPage() {
   }
 
   if (!wishlist || wishlist.length === 0) {
-    return <div className="min-h-screen bg-gray-50">No items in wishlist</div>
+    return <>
+     <div className="min-h-screen bg-gray-50 mb-10">
+      <div className='p-3 pt-5'>
+        <Link href="/room">
+          <Button variant="ghost" size="icon" className="bg-white rounded-full shadow-md absolute left-4">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
+        <h2 className="text-xl font-semibold text-center font-sans text-black">Wishlist</h2>
+      </div>
+      <div className="container px-4 py-6"><h2 className="text-xl font-semibold text-gray-800 mb-4">No Room Found in WishList</h2></div>
+      <BottomNavigation />
+    </div>
+    </>
   }
 
   return (

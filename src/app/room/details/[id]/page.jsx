@@ -209,7 +209,7 @@ export default function DetailsPage() {
       </div>
 
       {/* Action Buttons */}
-      <div className="container px-4 py-6 mt-[13vh] ">
+      {isRoomOwner ? "" : <div className="container px-4 py-6 mt-[13vh] ">
         <div className="grid grid-cols-4 gap-4">
           {[
             { icon: <MessageCircle className="h-6 w-6" />, label: "Message" , href: `/chat/${room.id}`},
@@ -229,7 +229,8 @@ export default function DetailsPage() {
             </Link>
           ))}
         </div>
-      </div>
+      </div>}
+      
 
       {/* Details Content */}
       <div className="container px-4 overflow-y-auto h-[60vh] ">
