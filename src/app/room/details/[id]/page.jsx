@@ -32,6 +32,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Image from "next/image"
 import Link from "next/link"
 import { Skeleton } from '@/components/ui/skeleton'
+import { RoomEnquiryDrawer } from '@/components/RoomEnquiryDrawer'
+
+
 
 export default function DetailsPage() {
   const { id } = useParams()
@@ -44,7 +47,7 @@ export default function DetailsPage() {
   const isInWishlist = wishlist.some(item => item.id === id)
   const [isRoomOwner, setIsRoomOwner] = useState(false);
   const roomOwner = useSelector((state) => state?.user?.listings);
- 
+ const [dialog , setDialog] = useState(false)
   
   
  
@@ -141,6 +144,14 @@ export default function DetailsPage() {
       </div>
     )
   }
+  const openDialog = () => {
+    setDialog(true)
+  }
+
+  const closeDialog = () => {
+    setDialog(false)
+  }
+
 
   if (!room) {
     return <div>Room not found</div>
@@ -195,6 +206,7 @@ export default function DetailsPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
+          
           <div className="flex gap-2">
             <Button variant="ghost" size="icon" className="bg-white rounded-full" onClick={handleToggleWishlist}>
               <Heart className={`h-4 w-4 ${isInWishlist ? 'text-red-500 fill-current' : 'text-black'}`} />
@@ -233,7 +245,7 @@ export default function DetailsPage() {
       
 
       {/* Details Content */}
-      <div className="container px-4 overflow-y-auto h-[60vh] ">
+      <div className={`container px-4 overflow-y-auto p-4 h-[60vh] ${isRoomOwner ? 'mt-[13vh] ' : ''}` } >
         <Tabs defaultValue="overview">
           <TabsList className="w-full grid grid-cols-2 gap-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -306,15 +318,24 @@ export default function DetailsPage() {
           </TabsContent>
         </Tabs>
       </div>
-      {isRoomOwner ? "" : <>
+      {isRoomOwner ? <div className='fixed bottom-[1vh] w-full p-2'>
+        <Link href={`#`} >
+          <Button  className="w-full  py-5 text-lg font-sans rounded-md bg-black">Edit</Button>
+        
+        </Link>
+      </div>: <>
       
       <div className=' grid grid-cols-2 gap-4 bg-white p-2  w-full mt-5 fixed bottom-0'>
         <Link href={`/chat/${room.id}`} >
           <Button  className="w-full mt-4 py-5 rounded-md bg-black">Chat Now</Button>
         
         </Link>
-        <Button  className="w-full mt-4 py-5 rounded-md border-black bg-white border-2 text-black">Enquire Now</Button>
+       
+        <Button  className="w-full mt-4 py-5 rounded-md border-black bg-white border-2 text-black" onClick={()=> openDialog()}  >Enquire Now </Button>
+      
+        
       </div>
+        {dialog && <RoomEnquiryDrawer  isOpenD={true} onClose={closeDialog} /> }
       </>}
     </div>
   )
