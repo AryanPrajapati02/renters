@@ -1,6 +1,6 @@
 'use client'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchLatestListings, fetchUserDetail } from '@/action';
+import { fetchChatConnections, fetchLatestListings, fetchUserDetail } from '@/action';
 
 const isBrowser = typeof window !== 'undefined';
 // Define the initial state
@@ -11,6 +11,7 @@ const initialState = {
   wishlist: isBrowser ? JSON.parse(localStorage.getItem('wishlist')) || [] : [],
   status: 'idle',
   error: null,
+  chatConnections:null
 };
 
 // Create an async thunk for fetching user data
@@ -72,6 +73,20 @@ export const fetchLatestListing = createAsyncThunk('latest/listing/fetch', async
  
 });
 
+export const chatConnectionsByUser = createAsyncThunk('chat/connections/fetch',async(currentUserId)=>{
+  try{
+    const data = await fetchChatConnections(currentUserId);
+    if(data.success){
+      const d = Array.from(new Set(data.data.map(item => item.listing_id)))
+      return d
+    }else{
+      return data
+    }
+  }catch(e){
+    console.log(e)
+    return e
+  }
+})
 
 
 const userSlice = createSlice({
@@ -104,6 +119,10 @@ const userSlice = createSlice({
       .addCase(fetchLatestListing.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.latestListings = action.payload?.data;
+      })
+      .addCase(chatConnectionsByUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.chatConnections = action.payload
       })
     
   },

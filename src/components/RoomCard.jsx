@@ -1,10 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MapPin, Users, Heart, Wifi, Coffee, ShowerHead, Wind, Thermometer, ParkingMeter,  Flower, AirVent, Home, User } from "lucide-react";
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
 const RoomCard = ({ room }) => {
   
+  const roomOwner = useSelector((state) => state?.user?.listings);
 
+  const [isRoomOwner, setIsRoomOwner] = useState(false);
+  const checkRoomOwner = () => {
+    const owner = roomOwner?.find((owner) => owner.id === room?.id);
+    if (owner) {
+      setIsRoomOwner(true);
+    }
+  }
+useEffect(()=>{
+  checkRoomOwner();
+} , [])
+  
   const getAmenityIcon = (amenity) => {
     switch (amenity) {
       case 'wifi':
@@ -122,8 +135,8 @@ const RoomCard = ({ room }) => {
         </div> */}
         {/* <div className="flex items-center mb-4">
         </div> */}
-        <button className="w-full mt-4 bg-gray-800 text-white py-2 rounded-md hover:bg-gray-700 transition-colors">
-          Book Now
+        <button className={`w-full mt-4 bg-gray-800 text-white py-2 rounded-md hover:bg-gray-700 transition-colors  ${isRoomOwner ? 'hidden' : ''}`}>
+          View Details
         </button>
       </div>
     </div>

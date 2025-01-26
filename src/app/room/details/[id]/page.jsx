@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { fetchLatestListing, toggleWishlist } from '@/app/redux/slice'
+import { fetchLatestListing, fetchUserListing, toggleWishlist } from '@/app/redux/slice'
 import Carousel from '@/components/ui/Carousel'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'next/navigation'
@@ -42,16 +42,35 @@ export default function DetailsPage() {
   const [addWishlist, setAddWishlist] = useState(false)
   const wishlist = useSelector((state) => state?.user?.wishlist)
   const isInWishlist = wishlist.some(item => item.id === id)
+  const [isRoomOwner, setIsRoomOwner] = useState(false);
+  const roomOwner = useSelector((state) => state?.user?.listings);
+ 
+  
+  
+ 
 
   useEffect(() => {
     async function fetchData() {
       if (!roomData || roomData.length === 0) {
         await dispatch(fetchLatestListing())
       }
+      if(!roomOwner || roomOwner.length === 0){
+        await dispatch(fetchUserListing())
+      }
+
       setLoading(false)
+
     }
     fetchData()
   }, [dispatch, roomData])
+
+  useEffect(() => {
+    const owner = roomOwner?.find((owner) => owner.id === room?.id);
+    if (owner) {
+      setIsRoomOwner(true);
+    }
+   
+  },[])
 
   const handleToggleWishlist = () => {
     dispatch(toggleWishlist(room));
@@ -180,9 +199,7 @@ export default function DetailsPage() {
             <Button variant="ghost" size="icon" className="bg-white rounded-full" onClick={handleToggleWishlist}>
               <Heart className={`h-4 w-4 ${isInWishlist ? 'text-red-500 fill-current' : 'text-black'}`} />
             </Button>
-            <Button variant="ghost" size="icon" className="bg-white rounded-full">
-              <Share2 className="h-4 w-4" />
-            </Button>
+           
           </div>
         </div>
         <div className="absolute bottom-[-13vh] right-4 bg-black/50 text-white px-2 py-1 rounded-md text-sm">
@@ -195,19 +212,21 @@ export default function DetailsPage() {
       <div className="container px-4 py-6 mt-[13vh] ">
         <div className="grid grid-cols-4 gap-4">
           {[
-            { icon: <Phone className="h-6 w-6" />, label: "Call" },
-            { icon: <MessageCircle className="h-6 w-6" />, label: "Message" },
-            { icon: <Navigation2 className="h-6 w-6" />, label: "Direction" },
-            { icon: <Share2 className="h-6 w-6" />, label: "Share" },
+            { icon: <MessageCircle className="h-6 w-6" />, label: "Message" , href: `/chat/${room.id}`},
+            { icon: <Phone className="h-6 w-6" />, label: "Call.."  , href: `tel:${room.ownerPhone}`},
+            { icon: <Navigation2 className="h-6 w-6" />, label: "Direction" ,href: `https://www.google.com/maps/search/?api=1&query=${room.location}`},
+            { icon: <Share2 className="h-6 w-6" />, label: "Share", href: `https://wa.me/?text=${room.location}` },
           ].map((action) => (
+            <Link href={action.href}>
             <Button
               key={action.label}
               variant="outline"
-              className="flex flex-col items-center py-4 h-auto"
+              className="flex flex-col items-center py-4 h-auto w-full"
             >
               {action.icon}
               <span className="mt-2 text-sm">{action.label}</span>
             </Button>
+            </Link>
           ))}
         </div>
       </div>
@@ -286,6 +305,8 @@ export default function DetailsPage() {
           </TabsContent>
         </Tabs>
       </div>
+      {isRoomOwner ? "" : <>
+      
       <div className=' grid grid-cols-2 gap-4 bg-white p-2  w-full mt-5 fixed bottom-0'>
         <Link href={`/chat/${room.id}`} >
           <Button  className="w-full mt-4 py-5 rounded-md bg-black">Chat Now</Button>
@@ -293,6 +314,7 @@ export default function DetailsPage() {
         </Link>
         <Button  className="w-full mt-4 py-5 rounded-md border-black bg-white border-2 text-black">Enquire Now</Button>
       </div>
+      </>}
     </div>
   )
 }

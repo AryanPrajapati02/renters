@@ -403,7 +403,7 @@ export async function fetchChatConnections(userId) {
       new Set(data.map(item => JSON.stringify(item))) // Convert objects to strings
     ).map(str => JSON.parse(str))
 
-   
+ 
    
 
     return { success: true, message: 'Chat connections fetched successfully', data: result }

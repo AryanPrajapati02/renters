@@ -1,70 +1,90 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import { fetchChatConnections } from '@/action/index';
-import { useSelector, useDispatch } from 'react-redux';
-import Link from 'next/link';
-import { fetchUser } from '../redux/slice';
+import { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import Link from 'next/link'
+import { chatConnectionsByUser, fetchLatestListing, fetchUser } from '../redux/slice'
+import Image from 'next/image'
+import { Arrow } from '@radix-ui/react-select'
+import { ArrowLeft } from 'lucide-react'
 
 export default function ChatConnectionsPage() {
-  const dispatch = useDispatch();
-  const [chatConnections, setChatConnections] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const currentUserId = useSelector((state) => state?.user?.user?.id);
+  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(true)
+  const currentUserId = useSelector((state) => state?.user?.user?.id)
+  const latestListing = useSelector((state) => state?.user?.latestListings)
+  const chatConnectionsData = useSelector((state) => state?.user?.chatConnections)
 
   useEffect(() => {
     if (!currentUserId) {
-      dispatch(fetchUser());
+      dispatch(fetchUser())
     }
-  }, [currentUserId, dispatch]);
+  }, [currentUserId, dispatch])
 
   useEffect(() => {
     const fetchData = async () => {
       if (currentUserId) {
-        const d = await fetchChatConnections(currentUserId);
-        if (d.success) {
-          setChatConnections(d.data);
-        }
-        setLoading(false);
+        await dispatch(chatConnectionsByUser(currentUserId))
+        setLoading(false)
       }
-    };
-    fetchData();
-  }, [currentUserId]);
+    }
+    fetchData()
+  }, [currentUserId, dispatch])
+
+  useEffect(() => {
+    if (!latestListing) {
+      dispatch(fetchLatestListing())
+    }
+  }, [latestListing, dispatch])
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen text-xl">Loading...</div>;
+    return <div className="flex items-center justify-center h-screen text-xl">Loading...</div>
+  }
+
+  const getListingDetails = (listingId) => {
+    return latestListing?.find((listing) => listing.id === listingId)
   }
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Chat Connections</h1>
-      {chatConnections?.length === 0 ? (
+        <Link href="/room">
+        <ArrowLeft className="h-10 w-10 absolute shadow-lg rounded-full p-2"  />
+        </Link>
+      <h1 className="text-3xl font-bold mb-6 text-center font-sans">Chat Connections</h1>
+      {chatConnectionsData?.length === 0 ? (
         <p className="text-center text-gray-600">No chat connections found.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {chatConnections?.map((connection) => (
-            <div
-              key={connection.listing_id}
-              className="border rounded-lg shadow-md p-4 bg-white hover:shadow-lg transition-shadow duration-300"
-            >
-              <Link  href={`/chat/${connection.listing_id}`} className="text-xl font-semibold mb-2 text-gray-800">
-                Listing ID: {connection.listing_id}
-              </Link>
-              {/* <ul className="space-y-2">
-                {connection?.sender_ids?.map((sender_id) => (
-                  <li key={sender_id}>
-                    <Link href={`/chat/${connection.listing_id}`}>
-                      <Link  href={`/chat/${connection.listing_id}`} className="text-blue-500 hover:underline">
-                        {sender_id}
-                      </Link>
-                    </Link>
-                  </li>
-                ))}
-              </ul> */}
-            </div>
-          ))}
+          {chatConnectionsData?.map((connection) => {
+            const listingDetails = getListingDetails(connection)
+            return (
+              <div
+                key={connection}
+                className="border rounded-lg shadow-md  bg-white hover:shadow-lg transition-shadow duration-300"
+              >
+                <Link href={`/chat/${connection}`} className="block">
+                  {listingDetails && (
+                    <div className='flex'>
+
+                      <Image
+                        src={listingDetails?.listingImages?.[0].url}
+                        alt={`Listing ${connection}`}
+                        width={200}
+                        height={400}
+                        className="w-full h-36 p-2 object-cover rounded-xl flex-1"
+                      />
+                      <div className="p-4 ">
+                        <h2 className="text-xl font-semibold mb-2 text-gray-800"> Owner: {listingDetails.ownerName}</h2>
+                        
+                      </div>
+                    </div>
+                  )}
+                </Link>
+              </div>
+            )
+          })}
         </div>
       )}
     </div>
-  );
+  )
 }
