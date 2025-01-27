@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import {supabase} from "@/lib/db"
 import { cookies } from "next/headers";
-import { getCityAndStateFromSearch } from "@/action";
+import { getAddressCoordinates, getCityAndStateFromSearch } from "@/action";
 
 export async function POST(req) {
   try {
@@ -26,6 +26,7 @@ export async function POST(req) {
 
     // Insert listing into database
     const { data :listings, error } = await supabase.from("listing").insert(listing).select();
+    // //console.log(listings)
 
     if (error) throw error;
  
@@ -56,6 +57,13 @@ export async function POST(req) {
           return NextResponse.json({ success: false, error: "Failed to create listing" }, { status: 500 });
         }
         
+        // //console.log()
+
+        const add = await getAddressCoordinates(loc , listings[0].id)
+        if(!add.success){
+          return NextResponse.json({ success: false, error: "Failed to create listing" }, { status: 500 });
+        }
+        
 
       }
 
@@ -65,7 +73,7 @@ export async function POST(req) {
 
     return NextResponse.json({ success: true,message: "Listing created successfully" , data : listings });
   } catch (error) {
-    console.error("Error creating listing:", error);
+    //console.error("Error creating listing:", error);
     return NextResponse.json({ success: false, error: "Failed to create listing" }, { status: 500 });
   }
 }
@@ -85,7 +93,7 @@ export async function GET(request) {
 
     return NextResponse.json({ success: true , data : data });
   } catch (error) {
-    console.error("Error fetching listings:", error);
+    //console.error("Error fetching listings:", error);
     return NextResponse.json({ success: false, error: "Failed to fetch listings" }, { status: 500 });
   }
 }

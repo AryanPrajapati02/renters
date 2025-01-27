@@ -20,7 +20,7 @@ export async function POST(request) {
       .single();
 
     if (fetchError && fetchError.code !== 'PGRST116') {
-      console.error('Error fetching user:', fetchError);
+      //console.error('Error fetching user:', fetchError);
       return NextResponse.json({ error: 'Error fetching user' }, { status: 500 });
     }
 
@@ -38,7 +38,7 @@ export async function POST(request) {
           "password": hashedPassword
             
         }).select()
-        // console.log(data)
+        // //console.log(data)
 
         if (error) {
           return NextResponse.json({ 
@@ -64,7 +64,7 @@ export async function POST(request) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('Registration error:', error);
+    //console.error('Registration error:', error);
     return NextResponse.json({ 
       error: 'Registration failed' 
     }, { status: 500 });

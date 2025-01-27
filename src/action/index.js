@@ -9,39 +9,8 @@ import jwt from 'jsonwebtoken';
 
 
 async function sendMailOTP({ email, firstname, otp }) {
-    console.log('otp', otp , 'email', email) 
-    // try {
-    //   const { data, error } = await resend.emails.send({
-    //     from: 'Room <aryan@resend.dev>',
-    //     to: [email],
-    //     subject: "OTP Verification",
-    //     react: EmailTemplate({ firstname, otp }),
-    //   });
-  
-    //   if (error) {
-    //     return {
-    //       success: false,
-    //       message: "Failed to send email",
-    //       error,
-    //     };
-    //   }
-    //   console.log('emails ent' , data)
-  
-    //   return {
-    //     success: true,
-    //     message: "Email sent successfully",
-    //     data,
-    //   };
-    // } catch (error) {
-    //     console.log('error', error)
-    //   return {
-    //     success: false,
-    //     message: "An unexpected error occurred",
-    //     error,
-    //   };
-    // }
 
-     // Create a transporter object using the default SMTP transport
+   
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -61,13 +30,13 @@ async function sendMailOTP({ email, firstname, otp }) {
   // Send mail with defined transport object
   try {
     let info = await transporter.sendMail(mailOptions);
-    // console.log('Message sent: %s', info.messageId);
+    // //console.log('Message sent: %s', info.messageId);
     return {
       success: true,
       message: 'Email sent successfully',
     };
   } catch (error) {
-    console.error('Error sending email:', error);
+    // //console.error('Error sending email:', error);
     return {
       success: false,
       message: 'Failed to send email',
@@ -139,13 +108,13 @@ export async function verifyOTP({ email, otp }) {
   
       return { success: true, message: "OTP verified successfully" };
     } catch (error) {
-      console.error('Error verifying OTP:', error);
+      // //console.error('Error verifying OTP:', error);
       return { success: false, message: "Failed to verify OTP" };
     }
   }
 
   export async function verifyUser({email}){
-    // console.log('verify email', email)
+    // //console.log('verify email', email)
     try {
         const { data, error } = await supabase
         .from('user')
@@ -153,12 +122,12 @@ export async function verifyOTP({ email, otp }) {
         .eq('email', email)
         .select();
         if (error) throw error;
-        // console.log('=verified')
+        // //console.log('=verified')
         return { success: true, message: "User verified successfully" };
     
 
     }catch(error){
-        console.error('Error verifying User:', error);
+        // //console.error('Error verifying User:', error);
         return { success: false, message: "Failed to verify User" };
     }
 
@@ -207,7 +176,7 @@ export async function verifyOTP({ email, otp }) {
       
   
     }catch(e){
-      // console.log(e)
+      // //console.log(e)
       return e
     }
   
@@ -229,7 +198,7 @@ export async function verifyOTP({ email, otp }) {
 
       const response = await fetch(url);
       const data = await response.json();
-      // console.log('data', data)
+      // //console.log('data', data)
 
       if (data?.status != 'OK') {
        return { success: false, message: 'Unable to fetch address' }
@@ -259,32 +228,46 @@ export async function verifyOTP({ email, otp }) {
     return { success: true, message: 'Address updated successfully' , address: address };
 
   } catch (error) {
-    console.error('Error updating address:', error);
+    // //console.error('Error updating address:', error);
     return { success: false, message: 'An unexpected error occurred' };
   }
 }
   
   
-//   module.exports.getAddressCoordinates = async (address) => {
-//     if (!address) {
-//         return new Error('Address is required');
-//     }
-//     try {
-//         const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${process.env.GOOGLE_MAPS_API_KEY}`);
-//         if (response.data.status === 'OK') {
-//             const location = response.data.results[ 0 ].geometry.location;
-//             return {
-//                 ltd: location.lat,
-//                 lng: location.lng
-//             };
-//         } else {
-//             throw new Error('Unable to fetch coordinates');
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         throw error;
-//     }
-// }
+  export async function getAddressCoordinates(address ,listingId) {
+    if (!address) {
+        return new Error('Address is required');
+    }
+    try {
+        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${process.env.GOOGLE_MAPS_API_KEY}`);
+        const res = await response.json();
+        // //console.log('res', res)
+        if (res?.status === 'OK') {
+            const location = res.results[0].geometry.location;
+            // //console.log('location', location)
+
+            const {data , error} = await supabase
+            .from('listing')
+            .update({ coordinates: { latitude: location.lat, longitude: location.lng } })
+            .eq('id', listingId)
+            .select();
+
+
+            if (error) {
+              // //console.log(error)
+               return { success: false, message: 'Failed to update coordinates' };
+            }
+            return { success: true, message: 'Coordinates fetched successfully' };
+
+        } else {
+
+            return { success: false, message: 'Unable to fetch coordinates' };
+        }
+    } catch (error) {
+        // //console.error(error);
+        throw error;
+    }
+}
 
 export const getAutoCompleteSuggestions = async (input) => {
   if (!input) {
@@ -310,7 +293,7 @@ export const getAutoCompleteSuggestions = async (input) => {
          return { success: false, message: 'Unable to fetch suggestions' };
       }
   } catch (err) {
-      console.error(err);
+      // //console.error(err);
       return { success: false, message: 'An unexpected error occurred' };
   }
 }
@@ -323,8 +306,8 @@ export async function getCityAndStateFromSearch({input}){
       
       const size = input.split(',').length;
       
-        const city = input.split(',')[size-2];
-        const state = input.split(',')[size-1];
+        const city = [input.split(',')[size-3] , input.split(',')[size-2]]; 
+        const state = [input.split(',')[size-2], input.split(',')[size-1]];
       
       
       return { success: false, message: 'Unable to fetch city and state'  , city : city , state : state};
@@ -349,7 +332,7 @@ export const fetchLatestListings = async()=>{
   
       return { success: true, message: 'Latest listings fetched successfully', data };
     }catch(e){
-      console.log(e)
+      // //console.log(e)
       return { success: false, message: 'An unexpected error occurred' };
     }
 }
@@ -364,7 +347,7 @@ export async function fetchMessages(listingId, limit = 20) {
     .limit(limit)
 
   if (error) {
-    console.error("Error fetching messages:", error)
+    // //console.error("Error fetching messages:", error)
     return []
   }
   
@@ -379,7 +362,7 @@ export async function sendMessage(listingId, senderId, content) {
     .select()
 
   if (error) {
-    console.error("Error sending message:", error)
+    // //console.error("Error sending message:", error)
     return null
   }
   
@@ -389,7 +372,7 @@ export async function sendMessage(listingId, senderId, content) {
 
 export async function fetchChatConnections(userId) {
   try {
-    console.log('userId', userId)
+    // //console.log('userId', userId)
     const { data, error } = await supabase
       .from('messages')
       .select('listing_id, sender_id')
@@ -398,7 +381,7 @@ export async function fetchChatConnections(userId) {
     if (error) {
       return { success: false, message: 'Failed to fetch chat connections' }
     }
-    // console.log('data', data)
+    // //console.log('data', data)
     const result =Array.from(
       new Set(data.map(item => JSON.stringify(item))) // Convert objects to strings
     ).map(str => JSON.parse(str))
@@ -408,7 +391,87 @@ export async function fetchChatConnections(userId) {
 
     return { success: true, message: 'Chat connections fetched successfully', data: result }
   } catch (e) {
-    console.log(e)
+    // //console.log(e)
     return { success: false, message: 'An unexpected error occurred' }
   }
 }
+
+
+
+export async function sendEnquiryMail(roomId, enquiryDetails) {
+  try {
+ 
+
+
+
+    const { data: userData, error: userError } = await supabase
+      .from('listing')
+      .select(`ownerId(email)`)
+      .eq('id', roomId)
+
+      
+
+    if (userError) {
+      // //console.error('Error fetching user data:', userError)
+      return { success: false, message: 'Failed to fetch user data' }
+    }
+
+    const ownerEmail = userData[0].ownerId.email
+    // //console.log('ownerEmail', ownerEmail)
+
+    // Create a transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user:'boolean985@gmail.com' ,
+        pass: process.env.MAILER_PASSWORD,
+      },
+    })
+
+    // // Set up email data
+    const mailOptions = {
+      from: 'Renter',
+      to: ownerEmail,
+      subject: 'Room Enquiry',
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+          <h2 style="color: #333;">You have a new enquiry for your room</h2>
+          <p style="color: #555;">Here are the details:</p>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;">Name</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${enquiryDetails.name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;">Email</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${enquiryDetails.email}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;">Phone</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${enquiryDetails.phone}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;">Message</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${enquiryDetails.message}</td>
+            </tr>
+          </table>
+          <p style="color: #555;">Please respond to the enquiry as soon as possible.</p>
+          <p style="color: #555;">You can view the room details <a href="${process.env.BASE_URL}/room/details/${roomId}" style="color: #1a73e8;">here</a>.</p>
+        </div>
+      `,
+    }
+
+    // Send mail with defined transport object
+    const info = await transporter.sendMail(mailOptions)
+
+    // //console.log('Message sent: %s', info.messageId)i want
+
+    return { success: true, message: 'Enquiry mail sent successfully' }
+  } catch (error) {
+    // //console.error('Error sending enquiry mail:', error)
+    return { success: false, message: 'An unexpected error occurred' }
+  }
+}
+
+
+

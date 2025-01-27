@@ -38,7 +38,7 @@ export default function LocationAccess({Email}) {
         fetchLocationDetails(data.lat, data.lng)
       },
       (error) => {
-        console.error("Location Error:", error) // Log any errors
+        //console.error("Location Error:", error) // Log any errors
         setError("Unable to retrieve your location")
         setIsLoading(false)
       },
@@ -63,7 +63,7 @@ export default function LocationAccess({Email}) {
       
       
     } catch (error) {
-      console.error("Error fetching location details:", error)
+      //console.error("Error fetching location details:", error)
     }
   }
 

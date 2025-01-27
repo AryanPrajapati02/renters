@@ -57,10 +57,10 @@ export default function OtpVerification({ Email }) {
       // Call API to verify OTP
       setLoading(true)
       const res = await verifyOTP({ email: Email, otp: otpString })
-      // console.log(res)
+      // //console.log(res)
       if (res.success) {
         await verifyUser({email: Email})
-        // console.log('OTP Verified Successfully')
+        // //console.log('OTP Verified Successfully')
         setOpenLocationDrawer(true)
         setLoading(false)
 
@@ -68,7 +68,7 @@ export default function OtpVerification({ Email }) {
 
       }
       if(res.success === false){
-        // console.log('OTP Verification Failed')
+        // //console.log('OTP Verification Failed')
         toast.error(res.message)
         setLoading(false)
       }

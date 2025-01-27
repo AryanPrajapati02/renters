@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+ 
   gender: z.enum(["male", "female", "any"]),
   accommodationType: z.enum(["hostel", "pg", "flat", "dormitory"]),
   sharingType: z.number().min(1).max(10),
@@ -134,7 +134,7 @@ export default function RoomPostForm() {
       setLocationSuggestions([res.data])
       
     } else {
-      console.log(res)
+      //console.log(res)
     }
   }, 300)
 
@@ -169,7 +169,7 @@ export default function RoomPostForm() {
               {...register("description")}
               className="border-gray-300 focus:border-black focus:ring-black"
             />
-            {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+           
           </div>
 
           <div className="space-y-2">

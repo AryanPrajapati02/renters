@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { fetchLatestListing, fetchUserListing, toggleWishlist } from '@/app/redux/slice'
+import { fetchLatestListing, fetchUser, fetchUserListing, toggleWishlist } from '@/app/redux/slice'
 import Carousel from '@/components/ui/Carousel'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'next/navigation'
@@ -47,6 +47,7 @@ export default function DetailsPage() {
   const isInWishlist = wishlist.some(item => item.id === id)
   const [isRoomOwner, setIsRoomOwner] = useState(false);
   const roomOwner = useSelector((state) => state?.user?.listings);
+  const user = useSelector((state) => state?.user?.user);
  const [dialog , setDialog] = useState(false)
   
   
@@ -60,12 +61,16 @@ export default function DetailsPage() {
       if(!roomOwner || roomOwner.length === 0){
         await dispatch(fetchUserListing())
       }
+      if(!user || user === 0){
+        await dispatch(fetchUser())
+      }
+
 
       setLoading(false)
 
     }
     fetchData()
-  }, [dispatch, roomData])
+  }, [dispatch, roomData ,user])
 
   useEffect(() => {
     const owner = roomOwner?.find((owner) => owner.id === room?.id);
@@ -256,10 +261,7 @@ export default function DetailsPage() {
               <MapPin size={40} className="mr-2 text-gray-600" />
               <span className="text-gray-600">{room.location}</span>
             </div>
-            <div className="flex items-center mb-2">
-              <Phone size={20} className="mr-2 text-gray-600" />
-              <span className="text-gray-600">{room.ownerPhone}</span>
-            </div>
+           
             <div className="flex items-center mb-2">
               <User size={20} className="mr-2 text-gray-600" />
               <span className="text-gray-600">{room.ownerName}</span>
@@ -335,7 +337,7 @@ export default function DetailsPage() {
       
         
       </div>
-        {dialog && <RoomEnquiryDrawer  isOpenD={true} onClose={closeDialog} /> }
+        {dialog && <RoomEnquiryDrawer  isOpenD={true} onClose={closeDialog} user={user}  listingId={room.id} /> }
       </>}
     </div>
   )

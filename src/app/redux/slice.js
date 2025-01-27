@@ -42,7 +42,7 @@ export const fetchUserListing = createAsyncThunk('user/room/fetch', async () => 
        
       
     }catch(e){
-        console.log(e)
+        //console.log(e)
         return e
     }
     
@@ -65,7 +65,7 @@ export const fetchLatestListing = createAsyncThunk('latest/listing/fetch', async
        
       
     }catch(e){
-        console.log(e)
+        //console.log(e)
         return e
     }
     
@@ -83,7 +83,7 @@ export const chatConnectionsByUser = createAsyncThunk('chat/connections/fetch',a
       return data
     }
   }catch(e){
-    console.log(e)
+    //console.log(e)
     return e
   }
 })

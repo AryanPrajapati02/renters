@@ -17,8 +17,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { sendEnquiryMail } from "@/action"
 
-export function RoomEnquiryDrawer({ isOpenD , onClose }) {
+
+export function RoomEnquiryDrawer({ isOpenD , onClose ,user ,listingId }) {
+
+  
   const [isOpen, setIsOpen] = useState(isOpenD)
   const {
     register,
@@ -27,10 +31,24 @@ export function RoomEnquiryDrawer({ isOpenD , onClose }) {
   } = useForm()
 
   const onSubmit = async (data) => {
-    // Here you would handle the form submission
-    console.log("Form submitted", data)
-    toast.success("Enquiry submitted successfully!")
-    setIsOpen(false)
+    try {
+      const promise = sendEnquiryMail(listingId, data)
+      toast.promise(promise, {
+        pending: "Sending...",
+        success: "Enquiry sent successfully",
+        error: "Failed to send enquiry",
+      })
+  
+      const result = await promise
+      if (result.success) {
+        onClose()
+      } else {
+        toast.error(result.message)
+      }
+    } catch (e) {
+      //console.log(e)
+      toast.error("Failed to send enquiry")
+    }
   }
 
   return (
@@ -47,13 +65,14 @@ export function RoomEnquiryDrawer({ isOpenD , onClose }) {
           <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" {...register("name", { required: true })} placeholder="Enter your name" />
+              <Input id="name" {...register("name", { required: true })} value={user.name} placeholder="Enter your name" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
+                value={user.email}
                 {...register("email", { required: true })}
                 placeholder="Enter your email"
               />
@@ -62,7 +81,9 @@ export function RoomEnquiryDrawer({ isOpenD , onClose }) {
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
-                type="tel"
+
+
+                type="number"
                 {...register("phone", { required: true })}
                 placeholder="Enter your phone number"
               />
@@ -84,7 +105,7 @@ export function RoomEnquiryDrawer({ isOpenD , onClose }) {
                 Submit Enquiry
               </Button>
               <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" onClick={onClose}>Cancel</Button>
               </DrawerClose>
             </DrawerFooter>
           </form>

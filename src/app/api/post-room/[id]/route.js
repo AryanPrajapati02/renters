@@ -13,7 +13,7 @@ export async function GET(req, { params }) {
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error("Error fetching listing:", error);
+    //console.error("Error fetching listing:", error);
     return NextResponse.json({ success: false, error: "Failed to fetch listing" }, { status: 500 });
   }
 }
@@ -65,7 +65,7 @@ export async function GET(req, { params }) {
 
 //     return NextResponse.json({ success: true, data });
 //   } catch (error) {
-//     console.error("Error updating listing:", error);
+//     //console.error("Error updating listing:", error);
 //     return NextResponse.json({ success: false, error: "Failed to update listing" }, { status: 500 });
 //   }
 // }
@@ -131,7 +131,7 @@ export async function PUT(req) {
 
     return NextResponse.json({ success: true, message: "Listing updated successfully", data: updatedListing });
   } catch (error) {
-    console.error("Error updating listing:", error);
+    //console.error("Error updating listing:", error);
     return NextResponse.json({ success: false, error: "Failed to update listing" }, { status: 500 });
   }
 }
@@ -147,7 +147,7 @@ export async function DELETE(req, { params }) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting listing:", error);
+    //console.error("Error deleting listing:", error);
     return NextResponse.json({ success: false, error: "Failed to delete listing" }, { status: 500 });
   }
 }

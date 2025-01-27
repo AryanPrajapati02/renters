@@ -27,7 +27,7 @@ const handler = NextAuth({
             .single();
       
           if (fetchError && fetchError.code !== 'PGRST116') {
-            console.error('Error fetching user:', fetchError);
+            // //console.error('Error fetching user:', fetchError);
             return false;
           }
       
@@ -47,7 +47,7 @@ const handler = NextAuth({
               .single();
       
             if (insertError) {
-              console.error('Error inserting user:', insertError);
+              // //console.error('Error inserting user:', insertError);
               return false;
             }
       
@@ -75,7 +75,7 @@ const handler = NextAuth({
       
           return true;
         } catch (error) {
-          console.error('Error during sign-in process:', error);
+          // //console.error('Error during sign-in process:', error);
           return false;
         }
       }

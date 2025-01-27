@@ -41,7 +41,7 @@ export default function SignUpForm() {
 
   const handleLogin = async(formData) => {
     const { email, fullname, password } = formData;
-    // console.log(formData)
+    // //console.log(formData)
     if(fullname.length < 4) {
       setTick(true)
     }
@@ -75,7 +75,7 @@ export default function SignUpForm() {
       });
 
       const data = await response.json();
-      // console.log(data)
+      // //console.log(data)
 
       if (response.ok) {
         setEmail(email) 
@@ -93,7 +93,7 @@ export default function SignUpForm() {
 
       }
     } catch (error) {
-      // console.error('Registration error:', error);
+      // //console.error('Registration error:', error);
       setLoading(false)
       toast.error(`An error occured, please try again later, ${error}`)
     }

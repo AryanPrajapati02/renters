@@ -29,7 +29,7 @@ export default async function middleware(request) {
     
     
     } catch (error) {
-      console.error("JWT verification failed:", error)
+      //console.error("JWT verification failed:", error)
     }
   }
   // 4. Redirect to /login if the user is not authenticated
