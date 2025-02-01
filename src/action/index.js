@@ -165,6 +165,7 @@ export async function verifyOTP({ email, otp }) {
         address: user[0]?.address,
         locationAccess: user[0]?.locationAccess,
         city: user[0]?.city,
+        createdAt: user[0]?.created_at,
 
        
       }
@@ -373,10 +374,13 @@ export async function sendMessage(listingId, senderId, content) {
 export async function fetchChatConnections(userId) {
   try {
     // //console.log('userId', userId)
-    const { data, error } = await supabase
-      .from('messages')
-      .select('listing_id, sender_id')
-      .order('listing_id', { ascending: true })
+
+   const { data, error } = await supabase
+  .from('messages')
+  .select('listing_id, sender_id')
+  // .eq('listing_id', listingId)
+  .eq('sender_id', userId)
+  .order('created_at', { ascending: true })
 
     if (error) {
       return { success: false, message: 'Failed to fetch chat connections' }

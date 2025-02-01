@@ -5,8 +5,9 @@ import Link from "next/link"
 
 export default function PostRoomPage() {
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-         <div className="absolute top-4 left-4 right-4 flex justify-between">
+    <div className="min-h-screen  bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 mx-auto">
+   <div className="md:relative max-w-md "> 
+         <div className="absolute top-4 left-4 right-4 flex justify-between w-full ">
           <Link href="/room">
             <Button variant="ghost" size="icon" className="bg-white rounded-full">
               <ArrowLeft className="h-4 w-4" />
@@ -21,6 +22,9 @@ export default function PostRoomPage() {
         <RoomPostForm />
       </div>
     </div>
+    </div>
+ 
   )
 }
+
 

@@ -86,7 +86,7 @@ const UserProfile = () => {
               </TabsTrigger>
               <TabsTrigger value="listings" className="flex items-center">
                 <Home className="w-4 h-4 mr-2" />
-                Listings
+               Your Listings
               </TabsTrigger>
               {/* <TabsTrigger value="bookings" className="flex items-center">
                 <CalendarDays className="w-4 h-4 mr-2" />

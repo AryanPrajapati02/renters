@@ -6,7 +6,7 @@ import UserProfile from '@/components/ui/UserProfile'
 
 function ProfilePage() {
   return (
-    <div>
+    <div className=' bg-gray-100  mx-auto max-w-md' >
         <UserProfile />
         <BottomNavigation />
     </div>

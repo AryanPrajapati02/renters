@@ -135,9 +135,12 @@ useEffect(()=>{
         </div> */}
         {/* <div className="flex items-center mb-4">
         </div> */}
-        <button className={`w-full mt-4 bg-gray-800 text-white py-2 rounded-md hover:bg-gray-700 transition-colors  ${isRoomOwner ? 'hidden' : ''}`}>
+        {!isRoomOwner ? <>  <button className={`w-full mt-4 bg-gray-800 text-white py-2 rounded-md hover:bg-gray-700 transition-colors `}>
           View Details
-        </button>
+        </button> </> : <> <button className={`w-full mt-4 bg-gray-800 text-white py-2 rounded-md hover:bg-gray-700 transition-colors `}>
+         Edit Details
+        </button></>}
+       
       </div>
     </div>
   );

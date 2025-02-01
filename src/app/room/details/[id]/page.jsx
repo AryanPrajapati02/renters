@@ -201,7 +201,7 @@ export default function DetailsPage() {
   }
 
   return (
-    <div className="min-h-[100vh] bg-gray-50 ">
+    <div className="min-h-[100vh] bg-gray-50 max-w-md mx-auto">
       {/* Header */}
       <div className="relative">
         <Carousel images={room.listingImages.map(image => image.url)} />
@@ -320,14 +320,14 @@ export default function DetailsPage() {
           </TabsContent>
         </Tabs>
       </div>
-      {isRoomOwner ? <div className='fixed bottom-[1vh] w-full p-2'>
+      {isRoomOwner ? <div className='fixed bottom-[1vh] w-full max-w-md p-2'>
         <Link href={`#`} >
           <Button  className="w-full  py-5 text-lg font-sans rounded-md bg-black">Edit</Button>
         
         </Link>
       </div>: <>
       
-      <div className=' grid grid-cols-2 gap-4 bg-white p-2  w-full mt-5 fixed bottom-0'>
+      <div className=' grid grid-cols-2 gap-4 bg-white p-2 max-w-md w-full mt-5 fixed bottom-0'>
         <Link href={`/chat/${room.id}`} >
           <Button  className="w-full mt-4 py-5 rounded-md bg-black">Chat Now</Button>
         

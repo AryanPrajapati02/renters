@@ -18,8 +18,8 @@ function BottomNavigation() {
   // }
   return (
    <>
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t py-2 px-4 backdrop-blur-lg bg-white/90">
-        <div className="container mx-auto">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t py-2 px-4 backdrop-blur-lg bg-white/90 max-w-md mx-auto">
+        <div className="container mx-auto ">
           <div className="flex justify-between items-center">
             <Link href={`/room`}>
             <Button variant="ghost" size="icon" className="flex flex-col items-center">
